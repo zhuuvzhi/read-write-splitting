@@ -1,4 +1,4 @@
-**基于https://github.com/sysown/proxysql的Mysql读写分离方案**
+**基于https://github.com/sysown/proxysql 的Mysql读写分离方案**
 
 **使用方法**
 1. 执行 `build.sh`
