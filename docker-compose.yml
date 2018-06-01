@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  mysql_master:
+    image: mysql:5.7.17
+    ports:
+        - "3000:3306"
+    volumes:
+        - "./mysql/master/lib/:/var/lib/mysql/"
+        - "./mysql/master/log/:/var/log/mysql/"
+        - "./mysql/master/conf.d/:/etc/mysql/conf.d/"
+        - "./mysql/master/init-db.d:/docker-entrypoint-initdb.d"
+    environment:
+        - TZ=Asia/Shanghai
+        - MYSQL_ROOT_PASSWORD=123456
+  mysql_slave:
+    image: mysql:5.7.17
+    ports:
+      - "3001:3306"
+    volumes:
+      - "./mysql/slave/lib/:/var/lib/mysql/"
+      - "./mysql/slave/log/:/var/log/mysql/"
+      - "./mysql/slave/conf.d/:/etc/mysql/mysql.conf.d/"
+      - "./mysql/slave/init-db.d:/docker-entrypoint-initdb.d"
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456
+    links:
+      - mysql_master
+  proxysql:
+    build:
+      context: ./proxysql
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - "./proxysql/lib/proxysql:/var/lib/proxysql"
+    ports:
+      - "6032:6032"
+      - "6033:6033"
+    links:
+      - mysql_master
+      - mysql_slave
